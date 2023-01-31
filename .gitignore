@@ -1,0 +1,8 @@
+node_modules/
+npm-debug.log
+*/var/*
+*/vendor/*
+services/sym/var/
+services/sym/vendor/
+services/symProducer/var/
+services/symProducer/vendor/

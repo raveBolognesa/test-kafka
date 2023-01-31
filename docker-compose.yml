@@ -1,0 +1,81 @@
+version: '3'
+
+services:
+  zookeeper:
+    image: bitnami/zookeeper:3-debian-10
+    ports:
+      - 2181:2181
+    volumes:
+      - zookeeper_data:/bitnami
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+  kafka:
+    image: bitnami/kafka:2-debian-10
+    ports:
+      - 9092:9092
+    volumes:
+      - kafka_data:/bitnami
+    environment:
+      - KAFKA_ADVERTISED_HOST_NAME=kafka
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CREATE_TOPICS=sales-topic:1:1,ended-sales-topic:1:1
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - zookeeper
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    restart: "no"
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:9092"
+      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+    depends_on:
+      - "kafka"
+  database:
+    image: postgres:10.4-alpine
+    container_name: kafka-nodejs-example-database
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - 8000:5432
+    volumes:
+      - ./services/database/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./services/database/seed.sql:/docker-entrypoint-initdb.d/2-seed.sql
+
+  php_api:
+    container_name: php_api
+    command: sh -c "symfony server:start"
+    build:
+      context: ./services/symProducer
+    ports:
+      - '8001:8000'
+    volumes:
+      - ./services/symProducer:/var/www/symfony_docker
+      - ./docker/php-cli/php-cli-ini-overrides.ini:/etc/php/8.0/cli/conf.d/99-overrides.ini
+    depends_on:
+      - zookeeper
+      - kafka
+      - database
+
+  php_core:
+    container_name: php_core
+    command: sh -c "symfony server:start"
+    build:
+      context: ./services/sym
+    ports:
+      - '8002:8000'
+    volumes:
+      - ./services/sym:/var/www/symfony_docker
+      - ./docker/php-cli/php-cli-ini-overrides.ini:/etc/php/8.0/cli/conf.d/99-overrides.ini
+    depends_on:
+      - zookeeper
+      - kafka
+      - database
+volumes:
+  zookeeper_data:
+  kafka_data:
