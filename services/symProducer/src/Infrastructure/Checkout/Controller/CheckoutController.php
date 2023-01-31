@@ -18,16 +18,19 @@ class CheckoutController extends AbstractController
         private CheckoutService $checkoutService,
     ){}
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     #[Route('/checkout', name: 'app_checkout', methods: ['POST'])]
     public function index(Request $request): JsonResponse
     {
         try {
-
-            $model = $this->checkoutService->create(CheckoutRequest::fromRequest($request));
-            return $this->json([
-                'message' => $model->getItem(),
-                'path' => 'src/Controller/ConferenceController.php',
-            ]);
+            return $this->json(
+                $this->checkoutService->create(
+                    CheckoutRequest::fromRequest($request)
+                )->toArray()
+            );
         } catch (\Exception $exception) {
             throw new Exception($exception->getMessage());
         }

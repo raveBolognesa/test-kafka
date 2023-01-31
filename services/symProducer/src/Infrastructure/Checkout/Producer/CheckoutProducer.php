@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Checkout\Producer;
 
-use App\Domain\Checkout\Model\CheckoutModel;
+use App\Domain\Checkout\Entity\Checkout;
 use Psr\Log\LoggerInterface;
 use StsGamingGroup\KafkaBundle\Client\Contract\CallableInterface;
 use StsGamingGroup\KafkaBundle\Client\Contract\ProducerInterface;
@@ -23,13 +23,13 @@ class CheckoutProducer implements ProducerInterface, CallableInterface
 
     public function produce($data): Message
     {
-        /** @var $data CheckoutModel */
-        return new Message($data->getTimeFormatted(), null);
+        /** @var $data Checkout */
+        return new Message($data->getItem(), null);
     }
 
     public function supports($data): bool
     {
-        return $data instanceof CheckoutModel;
+        return $data instanceof Checkout;
     }
 
     protected function getLogger(): LoggerInterface
