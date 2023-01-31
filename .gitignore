@@ -2,7 +2,7 @@ node_modules/
 npm-debug.log
 */var/*
 */vendor/*
-services/sym/var/
-services/sym/vendor/
-services/symProducer/var/
-services/symProducer/vendor/
+services/sym-checkout-register/var/
+services/sym-checkout-register/vendor/
+services/sym-checkout-producer/var/
+services/sym-checkout-producer/vendor/

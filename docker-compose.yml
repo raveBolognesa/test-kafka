@@ -38,13 +38,13 @@ services:
 
   php_api:
     container_name: php_api
-    command: sh -c "symfony server:start"
+    command: sh -c "composer install && symfony server:start"
     build:
-      context: ./services/symProducer
+      context: services/sym-checkout-producer
     ports:
       - '8001:8000'
     volumes:
-      - ./services/symProducer:/var/www/symfony_docker
+      - ./services/sym-checkout-producer:/var/www/symfony_docker
       - ./docker/php-cli/php-cli-ini-overrides.ini:/etc/php/8.0/cli/conf.d/99-overrides.ini
     depends_on:
       - zookeeper
@@ -53,13 +53,13 @@ services:
 
   php_core:
     container_name: php_core
-    command: sh -c "symfony server:start"
+    command: sh -c "composer install && bin/console kafka:consumers:consume checkout_consumer -vvvV"
     build:
-      context: ./services/sym
+      context: services/sym-checkout-register
     ports:
       - '8002:8000'
     volumes:
-      - ./services/sym:/var/www/symfony_docker
+      - ./services/sym-checkout-register:/var/www/symfony_docker
       - ./docker/php-cli/php-cli-ini-overrides.ini:/etc/php/8.0/cli/conf.d/99-overrides.ini
     depends_on:
       - zookeeper
@@ -76,6 +76,16 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-app}
     volumes:
       - database_data:/var/lib/postgresql/data:rw
+
+  db:
+    image: bitnami/mariadb:10.6.7
+    ports:
+      - '3306:3306'
+    environment:
+      - MARIADB_ROOT_PASSWORD=${MARIADB_PASSWORD:-!ChangeMe!}
+      - MARIADB_USER=${MARIADB_USER:-app}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD:-!ChangeMe!}
+      - MARIADB_DATABASE=${MARIADB_DATABASE:-app}
 
 volumes:
   ###> doctrine/doctrine-bundle ###

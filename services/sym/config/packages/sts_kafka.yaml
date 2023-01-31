@@ -1,9 +1,0 @@
-parameters:
-    kafka_default_brokers: ['kafka:9092']
-sts_gaming_group_kafka:
-    consumers:
-        instances:
-            App\Infrastructure\Sales\Consumer\SalesConsumer:
-                brokers: '%kafka_default_brokers%'
-                topics: ['checkout-created']
-                decoder: StsGamingGroup\KafkaBundle\Decoder\PlainDecoder
