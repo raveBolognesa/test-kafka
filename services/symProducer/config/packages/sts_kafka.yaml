@@ -3,6 +3,6 @@ parameters:
 sts_gaming_group_kafka:
     producers:
         instances:
-            App\Infrastructure\Checkout\Producer\SalesProducer:
+            App\Infrastructure\Checkout\Producer\CheckoutProducer:
                 brokers: '%kafka_default_brokers%'
                 producer_topic: 'ended-sales-topic'
