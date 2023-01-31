@@ -1,8 +1,6 @@
 controllers:
-    resource:
-        path: ../../src/Infrastructure/
-        namespace: App\Infrastructure
-    type: attribute
+    resource: '../src/Infrastructure/Checkout/Controller/CheckoutController.php'
+    type: annotation
 
 kernel:
     resource: ../src/Kernel.php

@@ -6,7 +6,6 @@ namespace App\Infrastructure\Checkout\Controller;
 
 use App\Application\Checkout\Service\CheckoutService;
 use App\Domain\Checkout\Request\CheckoutRequest;
-use App\Infrastructure\Checkout\Producer\CheckoutProducer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,7 +16,6 @@ class CheckoutController extends AbstractController
 {
     public function __construct(
         private CheckoutService $checkoutService,
-        private CheckoutProducer $checkoutProducer,
     ){}
 
     #[Route('/checkout', name: 'app_checkout', methods: ['POST'])]
@@ -26,7 +24,6 @@ class CheckoutController extends AbstractController
         try {
 
             $model = $this->checkoutService->create(CheckoutRequest::fromRequest($request));
-            $this->checkoutProducer->produce($model)->flush();
             return $this->json([
                 'message' => $model->getItem(),
                 'path' => 'src/Controller/ConferenceController.php',

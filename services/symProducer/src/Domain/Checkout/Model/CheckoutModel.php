@@ -2,6 +2,7 @@
 
 namespace App\Domain\Checkout\Model;
 
+use App\Domain\Checkout\Entity\Checkout;
 use App\Domain\Checkout\Request\CheckoutRequest;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -47,6 +48,12 @@ class CheckoutModel
     public static function fromRequest(CheckoutRequest $request): self
     {
         return new self($request->getItem(), $request->getTime());
+    }
+
+
+    public static function fromEntity(Checkout $checkout): self
+    {
+        return new self($checkout->getItem(), $checkout->getTime());
     }
 
 

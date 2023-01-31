@@ -5,5 +5,5 @@ sts_gaming_group_kafka:
         instances:
             App\Infrastructure\Sales\Consumer\SalesConsumer:
                 brokers: '%kafka_default_brokers%'
-                topics: ['sales-topic']
+                topics: ['checkout-created']
                 decoder: StsGamingGroup\KafkaBundle\Decoder\PlainDecoder

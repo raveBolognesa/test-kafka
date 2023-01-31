@@ -12,6 +12,8 @@ RUN apt update \
 
 
 
+RUN apt-get update && apt-get install -y libpq-dev && docker-php-ext-install pdo pdo_pgsql
+
 RUN git clone --depth 1  https://github.com/edenhill/librdkafka.git \
     && cd librdkafka \
     && ./configure \
